@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BIT Durg Attendance Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Theme Default */
+            --bg-primary: #0f1117;
+            --bg-secondary: #1a1d29;
+            --bg-surface: #1e2230;
+            --bg-card: #181b29;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --accent-primary: #00cfc1;
+            --accent-secondary: #3f37c9;
+            --accent-tertiary: #4895ef;
+            --error: #ff4d6d;
+            --success: #00e676;
+            --warning: #f72585;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.4);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --transition-fast: all 0.15s ease;
+            --transition-normal: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+            --glass-bg: rgba(30, 34, 48, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --particle-color: rgba(0, 207, 193, 0.5);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #edf1f7;
+            --bg-surface: #ffffff;
+            --bg-card: #f1f3f9;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #4361ee;
+            --accent-secondary: #3f37c9;
+            --accent-tertiary: #4895ef;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --particle-color: rgba(67, 97, 238, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(63, 55, 201, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(0, 207, 193, 0.1) 0%, transparent 30%);
+        }
+
+        @media (prefers-reduced-motion) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+        }
+
+        .header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-logo svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary));
+            border-radius: var(--radius-sm);
+        }
+
+        h3 {
+            font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+            color: var(--text-primary);
+        }
+
+        p,
+        span,
+        a {
+            font-size: clamp(0.875rem, 2.5vw, 1rem);
+            color: var(--text-secondary);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--accent-primary);
+            transition: var(--transition-fast);
+        }
+
+        a:hover {
+            color: var(--accent-secondary);
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease forwards;
+            padding-top: 1rem;
+
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(63, 55, 201, 0.1), rgba(0, 207, 193, 0.1));
+            opacity: 0;
+            transition: var(--transition-normal);
+            z-index: -1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition-normal);
+            position: absolute;
+            top: 0.8rem;
+            left: 1rem;
+            background: var(--bg-card);
+            padding: 0.2rem;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(0, 207, 193, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(63, 55, 201, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(63, 55, 201, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-surface);
+        }
+
+        /* Loader Screen */
+        #fullscreen-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #fullscreen-loader.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #hud-panel {
+            max-width: 500px;
+            width: 90%;
+            background: var(--bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+        }
+
+        #loader-logo {
+            margin-bottom: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+
+            50% {
+                transform: translateY(5px) rotate(-2deg);
+            }
+
+            75% {
+                transform: translateY(-5px) rotate(1deg);
+            }
+        }
+
+        #loader-logo svg {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 10px rgba(0, 207, 193, 0.5));
+        }
+
+        #loader-terminal {
+            text-align: left;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1.5rem;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-line {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1rem;
+            background: var(--accent-primary);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        #loader-progress {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: var(--radius-sm);
+            transition: width 0.3s ease;
+        }
+
+        #loader-message {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        #loader-footer-msg {
+            margin-top: 2rem;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.5s;
+        }
+
+        #loader-footer-msg.show {
+            opacity: 1;
+        }
+
+        /* Attendance Cards */
+        .subject-card {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+            min-width: 80vw;
+            scroll-snap-align: center;
+        }
+
+        .subject-card {
+            margin-bottom: 1.5rem;
+            /* 👈 adds space between cards */
+        }
+
+        .subject-card:not(:last-child) {
+            margin-bottom: 1.5rem;
+        }
+
+
+        @media (min-width: 768px) {
+            .subject-card {
+                min-width: auto;
+            }
+        }
+
+        .subject-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subject-icon {
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        .status-badge {
+            margin-left: auto;
+            font-size: 1.2rem;
+        }
+
+        .attendance-stats {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .attendance-stats::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        @media (min-width: 480px) {
+            .attendance-stats {
+                grid-template-columns: repeat(3, 1fr);
+                display: grid;
+            }
+        }
+
+        .stat {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.5s ease;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .status-good {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--warning);
+        }
+
+        .status-icon {
+            font-size: 1rem;
+        }
+
+        /* Subject Carousel */
+        .subject-carousel {
+            gap: 1rem;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .subject-carousel {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                overflow-x: visible;
+            }
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            max-width: 280px;
+            width: calc(100% - 2rem);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Toast base */
+        .toast {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            background: var(--bg-surface);
+            border-left: 3px solid;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+
+        /* Show animation */
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* Color variants */
+        .toast-success {
+            border-left-color: var(--success);
+        }
+
+        .toast-error {
+            border-left-color: var(--error);
+        }
+
+        .toast-info {
+            border-left-color: var(--accent-tertiary);
+        }
+
+        /* Toast icon */
+        .toast-icon {
+            font-size: 1rem;
+            margin-right: 0.6rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .toast-success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast-error .toast-icon {
+            color: var(--error);
+        }
+
+        .toast-info .toast-icon {
+            color: var(--accent-tertiary);
+        }
+
+        /* Toast message */
+        .toast-message {
+            flex-grow: 1;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            word-wrap: break-word;
+        }
+
+        /* Close button */
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-left: 0.25rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .toast-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        .insta-link {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-fast);
+        }
+
+        .insta-link:hover {
+            color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(30deg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .theme-toggle i {
+            font-size: 1rem;
+            color: var(--accent-primary);
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--particle-color);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite linear;
+        }
+
+        /* Animations */
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg) translateX(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(var(--rotation)) translateX(var(--endPosX));
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .filter-controls {
+                grid-template-columns: 1fr !important;
+            }
+
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* New Features */
+        .menu-options {
+            display: grid;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .menu-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition-normal);
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-primary);
+        }
+
+        .menu-btn i {
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        .subject-selector {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .update-percentage-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .update-percentage-container h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .update-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .update-form input {
+            flex-grow: 1;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-primary);
+            opacity: 0;
+            z-index: 999;
+            animation: confettiFall 2s ease-out forwards;
+        }
+
+        /* Animate label when input is focused or has value */
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 0.8rem;
+            background: var(--bg-card);
+            padding: 0 0.2rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* When input is focused or has value, move label up */
+        .form-input:focus+.form-label,
+        .form-input:not(:placeholder-shown)+.form-label {
+            top: -0.6rem;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        /* Add this to your existing CSS */
+        /* Remove any existing #login-section styles and replace with: */
+        /* Login Section Styles */
+        #login-section {
+            max-width: 500px;
+            margin: 2rem auto;
+            opacity: 1;
+            /* Force visible */
+            display: block;
+            /* Force visible */
+            animation: none;
+            /* Remove animation temporarily for debugging */
+        }
+
+        .login-form {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            opacity: 1 !important;
+            /* Force visible */
+            transform: none !important;
+            /* Remove any transforms */
+        }
+
+        /* Container adjustments */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+            min-height: 50vh;
+            /* Ensure it takes up space */
+        }
+
+        /* Fullscreen loader - ensure it's hidden initially */
+        #fullscreen-loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 9999;
+        }
+
+        #fullscreen-loader.active {
+            display: flex;
+        }
+
+        #fullscreen-loader {
+            display: none;
+            /* Hidden initially */
+        }
+
+        #fullscreen-loader.active {
+            display: flex;
+            /* Show when active */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="var(--accent-primary)" />
+                <path d="M2 17L12 22L22 17" fill="none" stroke="var(--accent-primary)" stroke-width="2" />
+                <path d="M2 12L12 17L22 12" fill="none" stroke="var(--accent-primary)" stroke-width="2" />
+            </svg>
+            <span class="header-title">BIT Durg Attendance</span>
+        </div>
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <!-- Particles Background -->
+    <div class="particles" id="particles-js"></div>
+
+    <!-- Login Section (now outside loader) -->
+    <div class="container">
+        <div id="login-section" class="section"> <!-- Force visible -->
+            <h2>Login to BIT Durg</h2>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <input type="text" id="username" class="form-input" placeholder=" " required>
+                    <label for="username" class="form-label">Username</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" class="form-input" placeholder=" " required>
+                    <label for="password" class="form-label">Password</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">
+                    <i class="fas fa-sign-in-alt"></i> Start Tracker
+                </button>
+            </form>
+        </div>
+    </div>
+
+        <!-- OTP Section -->
+        <div id="otp-section" class="section" style="display: none;">
+            <h2>OTP Verification</h2>
+            <div class="card" style="text-align:center;">
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                        <i class="fas fa-shield-alt" style="font-size:1.75rem;color:#fff;"></i>
+                    </div>
+                    <p style="color:var(--text-secondary);font-size:0.95rem;">An OTP has been sent to your registered mobile/email. Please enter it below.</p>
+                </div>
+                <form id="otp-form" class="login-form">
+                    <div class="form-group">
+                        <input type="text" id="otp" class="form-input" placeholder=" " maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" required style="text-align:center;font-size:1.5rem;letter-spacing:0.4em;font-weight:700;">
+                        <label for="otp" class="form-label">Enter OTP</label>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-1">
+                            <i class="fas fa-check-circle"></i> Verify OTP
+                        </button>
+                        <button type="button" onclick="backToLogin()" class="btn btn-secondary flex-1">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </form>
+                <p id="otp-timer" style="margin-top:1rem;font-size:0.85rem;color:var(--text-tertiary);"></p>
+            </div>
+        </div>
+    <!-- Fullscreen Loader (now hidden initially) -->
+    <div id="fullscreen-loader">
+        <div id="hud-panel">
+            <div id="loader-logo">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L90 50 L50 90 L10 50 Z" fill="none" stroke="var(--accent-primary)" stroke-width="8"
+                        stroke-linejoin="round">
+                        <animate attributeName="stroke-dasharray" values="0,300;300,0" dur="1.5s" fill="freeze" />
+                    </path>
+                </svg>
+            </div>
+            <div id="loader-terminal">
+                <div class="terminal-line">Initializing BIT Durg Attendance Tracker...</div>
+                <div class="terminal-line">Checking system requirements...</div>
+                <div class="terminal-line">Connecting to BIT Durg ERP...</div>
+                <div class="terminal-line">Loading attendance data modules...</div>
+                <div class="terminal-line">Almost ready...<span class="terminal-cursor"></span></div>
+            </div>
+            <div id="loader-progress">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="loader-message">Preparing your personalized attendance dashboard</div>
+            <div id="loader-footer-msg">
+                <a href="https://www.instagram.com/teeen.engineers?igsh=MWN0eGRmM3I2MXo0aA==" target="_blank"
+                    class="insta-link">
+                    <i class="fab fa-instagram"></i> Follow @teeen.engineers for more cool projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Percentage Section -->
+        <div id="percentage-section" class="section" style="display: none;">
+            <h2>Enter Required Percentage</h2>
+            <div class="card">
+                <form id="percentage-form">
+                    <div class="form-group">
+                        <input type="number" id="required-percentage" class="form-input" min="1" max="100" value="75"
+                            required>
+                        <label for="required-percentage" class="form-label">Required %</label>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-1">Submit</button>
+                        <button type="button" onclick="backToLogin()" class="btn btn-secondary flex-1">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Menu Section -->
+        <div id="menu-section" class="section" style="display: none;">
+            <h2>Menu Options</h2>
+            <div class="menu-options">
+                <button class="menu-btn" onclick="viewAllSubjects()">
+                    <span><i class="fas fa-list"></i> View All Subjects</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="menu-btn" onclick="showSubjectDropdown()">
+                    <span><i class="fas fa-search"></i> View Specific Subject</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="menu-btn" onclick="changePercentage()">
+                    <span><i class="fas fa-percentage"></i> Change Required Percentage</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="menu-btn" onclick="exit()">
+                    <span><i class="fas fa-sign-out-alt"></i> Exit</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Update Percentage Container -->
+            <div id="update-percentage-container" class="update-percentage-container" style="display: none;">
+                <h3>Update Required Percentage</h3>
+                <div class="form-group">
+                    <input type="number" id="new-required-percentage" class="form-input" min="1" max="100" value="75"
+                        required>
+                    <label for="new-required-percentage" class="form-label">New Required %</label>
+                </div>
+                <button onclick="submitUpdatedPercentage()" class="btn btn-primary w-full mt-2">
+                    <i class="fas fa-sync-alt"></i> Update Percentage
+                </button>
+                <div id="update-error" class="error-message"></div>
+            </div>
+
+            <div id="output" class="mt-4"></div>
+        </div>
+
+        <!-- Subject Selection Dropdown -->
+        <div id="subject-select-container" class="section" style="display: none;">
+            <h2>Select Subject</h2>
+            <select id="subject-dropdown" class="subject-selector">
+                <option value="">-- Select a Subject --</option>
+            </select>
+            <button onclick="backToMenu()" class="btn btn-secondary w-full">
+                <i class="fas fa-arrow-left"></i> Back to Menu
+            </button>
+            <div id="subject-details" class="subject-details" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Made with ❤️ by <a href="https://www.instagram.com/teeen.engineers?igsh=MWN0eGRmM3I2MXo0aA==" target="_blank"
+                class="insta-link">
+                <i class="fab fa-instagram"></i> @teeen.engineers
+            </a></p>
+    </footer>
+
+    <script>
+        // Global variables
+        let attendanceData = {};
+        let requiredPercentage = 75;
+        let cachedOriginalData = null;
+
+        // DOM Elements
+        const header = document.getElementById('header');
+        const percentageSection = document.getElementById('percentage-section');
+        const menuSection = document.getElementById('menu-section');
+        const subjectSelectContainer = document.getElementById('subject-select-container');
+        const updatePercentageContainer = document.getElementById('update-percentage-container');
+        const fullscreenLoader = document.getElementById('fullscreen-loader');
+        const progressBar = document.getElementById('progress-bar');
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        const loaderFooterMsg = document.getElementById('loader-footer-msg');
+        const toastContainer = document.getElementById('toast-container');
+        const newPercentageInput = document.getElementById('new-required-percentage');
+        const themeToggle = document.getElementById('theme-toggle');
+        const loginForm = document.getElementById('login-form');
+
+        // Initialize particles
+        function initParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                // Random position
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+
+                // Random animation duration
+                particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    ${type === 'success' ? '<i class="fas fa-check-circle"></i>' :
+                    type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' :
+                        '<i class="fas fa-info-circle"></i>'}
+                </div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close"><i class="fas fa-times"></i></button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // Simulate loading animation
+        // Remove the simulateLoading() call from window.onload
+        window.addEventListener('load', function () {
+            initParticles();
+
+            // Add scroll event for header
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Easter egg - confetti on logo click
+            const logo = document.querySelector('.header-title');
+            let clickCount = 0;
+
+            logo.addEventListener('click', function () {
+                clickCount++;
+                if (clickCount === 5) {
+                    // Create confetti
+                    for (let i = 0; i < 50; i++) {
+                        const confetti = document.createElement('div');
+                        confetti.classList.add('confetti');
+
+                        // Random color
+                        const colors = ['#00cfc1', '#3f37c9', '#4895ef', '#f72585', '#00e676'];
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                        // Random position
+                        confetti.style.left = `${Math.random() * 100}vw`;
+                        confetti.style.top = '0';
+
+                        // Random rotation and end position
+                        confetti.style.setProperty('--rotation', `${Math.random() * 360}deg`);
+                        confetti.style.setProperty('--endPosX', `${Math.random() * 200 - 100}px`);
+
+                        document.body.appendChild(confetti);
+
+                        // Remove after animation
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, 2000);
+                    }
+
+                    // Show message
+                    showToast('You found the secret party! 🎉 Follow @teeen.engineers for more fun!', 'info');
+                    clickCount = 0;
+                }
+            });
+        });
+
+        // Updated login handler
+        window.addEventListener('load', function () {
+            initParticles();
+
+            // Set up scroll event
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Login form submission
+            document.getElementById('login-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                fullscreenLoader.classList.add('active');
+                simulateLoading();
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: document.getElementById('username').value,
+                            password: document.getElementById('password').value
+                        })
+                    });
+
+                    const data = await response.json();
+                    fullscreenLoader.classList.remove('active');
+
+                    if (data.error) {
+                        showToast(data.error, 'error');
+                    } else if (data.otp_required) {
+                        // OTP screen needed
+                        document.getElementById('login-section').style.display = 'none';
+                        document.getElementById('otp-section').style.display = 'block';
+                        document.getElementById('otp').value = '';
+                        document.getElementById('otp').focus();
+                        showToast('OTP sent! Please check your registered mobile/email.', 'info');
+                        startOtpTimer(120);
+                    } else {
+                        progressBar.style.width = '100%';
+                        setTimeout(() => {
+                            document.getElementById('login-section').style.display = 'none';
+                            document.getElementById('login-section').parentElement.style.display = 'none';
+                            document.getElementById('percentage-section').style.display = 'block';
+                            cachedOriginalData = data.raw_data;
+                        }, 800);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Failed to login. Please try again.', 'error');
+                    fullscreenLoader.classList.remove('active');
+                }
+            });
+
+            // OTP timer
+            let otpTimerInterval = null;
+            function startOtpTimer(seconds) {
+                clearInterval(otpTimerInterval);
+                const timerEl = document.getElementById('otp-timer');
+                let remaining = seconds;
+                timerEl.textContent = `OTP expires in ${remaining}s`;
+                otpTimerInterval = setInterval(() => {
+                    remaining--;
+                    if (remaining <= 0) {
+                        clearInterval(otpTimerInterval);
+                        timerEl.textContent = 'OTP expired. Please go back and login again.';
+                        timerEl.style.color = 'var(--error)';
+                    } else {
+                        timerEl.textContent = `OTP expires in ${remaining}s`;
+                        timerEl.style.color = remaining < 30 ? 'var(--error)' : 'var(--text-tertiary)';
+                    }
+                }, 1000);
+            }
+
+            // OTP form submit
+            document.getElementById('otp-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const otpValue = document.getElementById('otp').value.trim();
+                if (!otpValue) { showToast('Please enter the OTP', 'error'); return; }
+
+                fullscreenLoader.classList.add('active');
+                simulateLoading();
+
+                try {
+                    const response = await fetch('/submit_otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ otp: otpValue })
+                    });
+
+                    const data = await response.json();
+                    fullscreenLoader.classList.remove('active');
+
+                    if (data.error) {
+                        showToast(data.error, 'error');
+                        document.getElementById('otp').value = '';
+                        document.getElementById('otp').focus();
+                    } else {
+                        clearInterval(otpTimerInterval);
+                        progressBar.style.width = '100%';
+                        setTimeout(() => {
+                            document.getElementById('otp-section').style.display = 'none';
+                            document.getElementById('percentage-section').style.display = 'block';
+                            cachedOriginalData = data.raw_data;
+                            showToast('OTP verified! Welcome.', 'success');
+                        }, 800);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Failed to verify OTP. Please try again.', 'error');
+                    fullscreenLoader.classList.remove('active');
+                }
+            });
+        });
+
+
+        // Keep the existing simulateLoading function but remove the fullscreenLoader activation
+        // Terminal animation steps
+        const terminalSteps = [
+            "Initializing BIT Durg Attendance Tracker...",
+            "Checking system requirements...",
+            "Connecting to BIT Durg ERP...",
+            "Loading attendance data modules...",
+            "Almost ready..."
+        ];
+
+        const terminalContainer = document.getElementById("loader-terminal");
+        terminalContainer.innerHTML = "";
+
+        function showTerminalSteps(callback) {
+            let current = 0;
+
+            function showNextStep() {
+                if (current < terminalSteps.length) {
+                    const line = document.createElement("div");
+                    line.classList.add("terminal-line");
+                    line.innerHTML = `<span class='loader-dot' style='margin-right: 0.5rem; display: inline-block; width: 10px; height: 10px; border: 2px solid var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite;'></span>${terminalSteps[current]}`;
+                    terminalContainer.appendChild(line);
+
+                    setTimeout(() => {
+                        const dot = line.querySelector(".loader-dot");
+                        dot.outerHTML = `<i class='fas fa-check-circle' style='color: var(--success); margin-right: 0.5rem;'></i>`;
+                        current++;
+                        showNextStep();
+                    }, 1500);
+                } else {
+                    // Final message and footer
+                    document.getElementById('loader-message').textContent = "College ka ERP slow hai, hamara tool nahi 😅";
+                    loaderFooterMsg.classList.add('show');
+                    callback && callback();
+                }
+            }
+
+            showNextStep();
+        }
+
+        function simulateLoading(doneCallback) {
+            terminalContainer.innerHTML = ""; // 🧹 clear previous terminal lines
+            progressBar.style.width = '0%';
+            let progress = 0;
+            const increment = () => {
+                if (progress < 90) {
+                    progress += Math.random() * 5;
+                    progressBar.style.width = `${progress}%`;
+                    setTimeout(increment, 200);
+                }
+            };
+            increment();
+            showTerminalSteps(doneCallback);
+        }
+
+        // Spinner animation
+        const style = document.createElement('style');
+        style.textContent = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}`;
+        document.head.appendChild(style);
+
+        // Animate terminal lines
+        terminalLines.forEach((line, index) => {
+            setTimeout(() => {
+                line.style.animationDelay = `${index * 0.5}s`;
+                line.classList.add('animate');
+            }, index * 800);
+        });
+
+        // Show footer message after delay
+        setTimeout(() => {
+            loaderFooterMsg.classList.add('show');
+        }, 4000);
+
+
+        // Submit updated percentage
+        async function submitUpdatedPercentage() {
+            const newPercentage = document.getElementById('new-required-percentage').value;
+
+            if (newPercentage < 1 || newPercentage > 100) {
+                document.getElementById('update-error').textContent = 'Percentage must be between 1 and 100';
+                document.getElementById('update-error').classList.add('show');
+                return;
+            }
+
+            try {
+                const response = await fetch('/set_percentage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ required_percentage: newPercentage })
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('update-error').textContent = data.error;
+                    document.getElementById('update-error').classList.add('show');
+                } else {
+                    attendanceData = data.attendance;
+                    requiredPercentage = data.required_percentage;
+                    document.getElementById('update-error').textContent = '';
+                    document.getElementById('update-error').classList.remove('show');
+
+                    // Show success toast
+                    showToast(`Percentage updated to ${requiredPercentage}%`, 'success');
+
+                    // Update view
+                    viewAllSubjects();
+
+                    // Hide update container
+                    updatePercentageContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to update percentage', 'error');
+            }
+        }
+
+        // Change percentage handler
+        function changePercentage() {
+            updatePercentageContainer.style.display = 'block';
+            document.getElementById('new-required-percentage').value = requiredPercentage;
+            document.getElementById('output').innerHTML = '';
+        }
+
+        // View all subjects
+        function viewAllSubjects() {
+            document.getElementById('update-percentage-container').style.display = 'none';
+            let html = '<div class="subject-carousel">';
+
+            for (const subject in attendanceData) {
+                const data = attendanceData[subject];
+                const percentage = data.current_percentage !== null ?
+                    data.current_percentage.toFixed(2) : 'N/A';
+                const statusClass = data.status.includes('Enough') ? 'status-good' : 'status-warning';
+                const statusEmoji = data.status.includes('Enough') ? '😎' : '⚠️';
+
+                html += `
+                    <div class="card subject-card">
+                        <div class="subject-name">
+                            <i class="fas fa-book subject-icon"></i>
+                            ${subject}
+                            <span class="status-badge">${statusEmoji}</span>
+                        </div>
+                        <div class="attendance-stats">
+                            <div class="stat">
+                                <div class="stat-value">${data.attended}</div>
+                                <div class="stat-label">Attended</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${data.total}</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${percentage}%</div>
+                                <div class="stat-label">Percentage</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="${statusClass}">
+                            <i class="fas ${data.status.includes('Enough') ? 'fa-check-circle' : 'fa-exclamation-triangle'} status-icon"></i>
+                            ${data.status}
+                        </div>
+                        ${data.allowed_bunks !== undefined ?
+                        `<p class="text-secondary mt-2">You can miss <strong>${data.allowed_bunks}</strong> more classes and still maintain ${requiredPercentage}%</p>` :
+                        `<p class="text-secondary mt-2">You need to attend <strong>${data.required_classes}</strong> more classes to reach ${requiredPercentage}%</p>`}
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            document.getElementById('output').innerHTML = html;
+
+            // Animate cards
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Show subject dropdown
+        function showSubjectDropdown() {
+            menuSection.style.display = 'none';
+            subjectSelectContainer.style.display = 'block';
+            updatePercentageContainer.style.display = 'none';
+
+            const dropdown = document.getElementById('subject-dropdown');
+            dropdown.innerHTML = '<option value="">-- Select a Subject --</option>';
+
+            // Populate dropdown with subjects
+            for (const subject in attendanceData) {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                dropdown.appendChild(option);
+            }
+
+            // Add event listener for dropdown change
+            dropdown.onchange = function () {
+                const selectedSubject = this.value;
+                if (selectedSubject) {
+                    showSubjectDetails(selectedSubject);
+                } else {
+                    document.getElementById('subject-details').style.display = 'none';
+                }
+            };
+        }
+
+        // Show details for selected subject
+        function showSubjectDetails(subjectName) {
+            const subjectInfo = attendanceData[subjectName];
+            const percentage = subjectInfo.current_percentage !== null ?
+                subjectInfo.current_percentage.toFixed(2) : 'N/A';
+            const statusClass = subjectInfo.status.includes('Enough') ? 'status-good' : 'status-warning';
+            const statusEmoji = subjectInfo.status.includes('Enough') ? '😎' : '⚠️';
+
+            let html = `
+                <div class="card">
+                    <div class="subject-name">
+                        <i class="fas fa-book subject-icon"></i>
+                        ${subjectName}
+                        <span class="status-badge">${statusEmoji}</span>
+                    </div>
+                    <div class="attendance-stats">
+                        <div class="stat">
+                            <div class="stat-value">${subjectInfo.attended}</div>
+                            <div class="stat-label">Attended</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${subjectInfo.total}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${percentage}%</div>
+                            <div class="stat-label">Percentage</div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="${statusClass}">
+                        <i class="fas ${subjectInfo.status.includes('Enough') ? 'fa-check-circle' : 'fa-exclamation-triangle'} status-icon"></i>
+                        ${subjectInfo.status}
+                    </div>
+            `;
+
+            if (subjectInfo.allowed_bunks !== undefined) {
+                html += `<p class="text-secondary mt-2">You can miss <strong>${subjectInfo.allowed_bunks}</strong> more classes and still maintain ${requiredPercentage}%</p>`;
+            } else {
+                html += `<p class="text-secondary mt-2">You need to attend <strong>${subjectInfo.required_classes}</strong> more classes to reach ${requiredPercentage}%</p>`;
+            }
+
+            html += `</div>`;
+            document.getElementById('subject-details').innerHTML = html;
+            document.getElementById('subject-details').style.display = 'block';
+        }
+
+        // Navigation functions
+
+        function backToMenu() {
+            subjectSelectContainer.style.display = 'none';
+            menuSection.style.display = 'block';
+            document.getElementById('subject-details').style.display = 'none';
+            updatePercentageContainer.style.display = 'none';
+        }
+
+
+
+
+        // Percentage submission handler
+        document.getElementById('percentage-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            requiredPercentage = document.getElementById('required-percentage').value;
+
+            try {
+                const response = await fetch('/set_percentage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ required_percentage: requiredPercentage })
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    attendanceData = data.attendance;
+                    percentageSection.style.display = 'none';
+                    menuSection.style.display = 'block';
+
+                    // Show welcome toast
+                    showToast(`Welcome! Showing results for ${requiredPercentage}% attendance requirement`, 'success');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to set percentage', 'error');
+            }
+        });
+
+        // Theme toggle
+        themeToggle.addEventListener('click', function () {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Update icon
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+
+            // Show toast
+            showToast(`Switched to ${newTheme} mode`, 'info');
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme')) {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'));
+            const icon = themeToggle.querySelector('i');
+            if (localStorage.getItem('theme') === 'light') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+
+        // Initialize particles on load
+        window.addEventListener('load', function () {
+            initParticles();
+
+            // Add scroll event for header
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Easter egg - confetti on logo click
+            const logo = document.querySelector('.header-title');
+            let clickCount = 0;
+
+            logo.addEventListener('click', function () {
+                clickCount++;
+                if (clickCount === 5) {
+                    // Create confetti
+                    for (let i = 0; i < 50; i++) {
+                        const confetti = document.createElement('div');
+                        confetti.classList.add('confetti');
+
+                        // Random color
+                        const colors = ['#00cfc1', '#3f37c9', '#4895ef', '#f72585', '#00e676'];
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                        // Random position
+                        confetti.style.left = `${Math.random() * 100}vw`;
+                        confetti.style.top = '0';
+
+                        // Random rotation and end position
+                        confetti.style.setProperty('--rotation', `${Math.random() * 360}deg`);
+                        confetti.style.setProperty('--endPosX', `${Math.random() * 200 - 100}px`);
+
+                        document.body.appendChild(confetti);
+
+                        // Remove after animation
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, 2000);
+                    }
+
+                    // Show message
+                    showToast('You found the secret party! 🎉 Follow @teeen.engineers for more fun!', 'info');
+                    clickCount = 0;
+                }
+            });
+        });
+        function backToLogin() {
+            document.getElementById('percentage-section').style.display = 'none';
+            document.getElementById('otp-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('login-section').parentElement.style.display = 'block';
+
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('otp').value = '';
+        }
+        function exit() {
+            // Hide all sections except login
+            document.getElementById('menu-section').style.display = 'none';
+            document.getElementById('subject-select-container').style.display = 'none';
+            document.getElementById('percentage-section').style.display = 'none';
+            document.getElementById('update-percentage-container').style.display = 'none';
+            document.getElementById('subject-details').style.display = 'none';
+            document.getElementById('otp-section').style.display = 'none';
+
+            // Show login
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('login-section').parentElement.style.display = 'block';
+
+            // Clear fields
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('otp').value = '';
+
+            showToast("You've been logged out. See you again soon!", "info");
+        }
+
+    </script>
+</body>
+
+</html>
